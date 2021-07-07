@@ -67,3 +67,36 @@ This study isn't meant to show which framework is better - it's strictly focused
 As can be seen from the data, the two frameworks have different sweet spots in terms of bundle size - and it depends a lot on what kind of use case you have. Svelte is still great for one-off components (e.g. wrapped as a custom element), but its size is in fact a disadvantage in medium to large scale applications, especially with SSR.
 
 In a broader sense, this study is meant to showcaes how frameworks are picking different balance points on the compile-time vs. runtime spectrum: Vue performs a decent amount of compile-time optimizations on the source format, but opts for a heavier base runtime in return for smaller generated code. Svelte opts for a minimal runtime but with the cost of heavier generated code. Can Svelte further improve its codegen to reduce code output? Can Vue further improve the tree-shaking to make the baseline smaller? Can another framework find an even better balance point? The answer is probably yes to all of these questions - but as long as we can now acknowledge that "framework size" is a much more nuanced topic than comparing the size of Hello World apps, this study has served its purpose.
+
+## Gaute's analysis & takeaways
+Everything above is from the original repository [vue-svelte-size-analysis](https://github.com/yyx990803/vue-svelte-size-analysis).
+
+From this point on I wanted to add my own comparisons with React in the mix, to compare three of the most popular frameworks.
+
+|                                   | Vue      | Svelte            | React          
+| --------------------------------- | -------- | ----------------- | -----------------
+| Source                            | 4.177kb  | 3.522kb           | 5.994kb          
+| Compiled w/o imports (min)        | 2.795kb  | 5.135kb (183.72%) | 3.941kb (141.00%)
+| Compiled w/o imports (min+gz)     | 1.275kb  | 2.178kb (170.82%) | 1.451kb (113.80%)
+| Compiled w/o imports (min+brotli) | 1.123kb  | 1.926kb (171.50%) | 1.267kb (128.22%)
+| Vite component chunk (min+brotli) | 1.14kb   | 1.96kb (171.92%)  | 1.22kb (107.01%) 
+| Vite vendor chunk (min+brotli)    | 17.45kb  | 1.85kb (10.60%)   | 36.03kb (206.47%) 
+
+### Framework size
+
+<img src="./chart3.png" width="600px">
+
+### Component size
+
+<img src="./chart2.png" width="600px">
+
+### Component + framework graph
+
+<img src="./chart4.png" width="600px">
+
+As mentioned above Svelte is smallest from 0 - 19 components and Vue is smallest beyond that.
+But React which has the largest vendor bundle and slightly larger component size than Vue, but much less than Svelte 
+needs to have 47 or more components at this size until it becomes smaller than Svelte.
+
+This was done on versions Vue 3.0.5, Svelte 3.37.0, and React 17.0.0. 
+Note that in newer versions they can make improvements reducing the size or add features growing the size.
