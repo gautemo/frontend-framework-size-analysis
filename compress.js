@@ -11,3 +11,4 @@ function compress(fw) {
 compress('vue')
 compress('svelte')
 compress('svelte.hydratable')
+compress('jsx')

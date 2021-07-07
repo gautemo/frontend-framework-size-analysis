@@ -1,4 +1,4 @@
-import App from '../todomvc.svelte'
+import App from '/todomvc.svelte'
 
 const app = new App({
   target: document.getElementById('app')
