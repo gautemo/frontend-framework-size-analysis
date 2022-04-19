@@ -71,16 +71,12 @@ In a broader sense, this study is meant to showcaes how frameworks are picking d
 ## Gaute's analysis & takeaways
 Everything above is from the original repository [vue-svelte-size-analysis](https://github.com/yyx990803/vue-svelte-size-analysis).
 
-From this point on I wanted to add my own comparisons with React in the mix, to compare three of the most popular frameworks.
+From this point on I wanted to add my own comparisons with React and Angular in the mix, to compare three of the most popular frameworks.
 
-|                                   | Vue      | Svelte            | React          
-| --------------------------------- | -------- | ----------------- | -----------------
-| Source                            | 4.177kb  | 3.522kb           | 5.994kb          
-| Compiled w/o imports (min)        | 2.795kb  | 5.135kb (183.72%) | 3.941kb (141.00%)
-| Compiled w/o imports (min+gz)     | 1.275kb  | 2.178kb (170.82%) | 1.451kb (113.80%)
-| Compiled w/o imports (min+brotli) | 1.123kb  | 1.926kb (171.50%) | 1.267kb (128.22%)
-| Vite component chunk (min+brotli) | 1.14kb   | 1.96kb (171.92%)  | 1.22kb (107.01%) 
-| Vite vendor chunk (min+brotli)    | 17.45kb  | 1.85kb (10.60%)   | 36.03kb (206.47%) 
+|                 | Vue      | Svelte            | React             | Angular
+| --------------- | -------- | ----------------- | ----------------- | --------
+| Component chunk | 1.14kb   | 1.96kb (171.92%)  | 1.22kb (107.01%)  | 1.68kB
+| Vendor chunk    | 17.45kb  | 1.85kb (10.60%)   | 36.03kb (206.47%) | 41.74kB
 
 ### Framework size
 
