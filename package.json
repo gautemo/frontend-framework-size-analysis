@@ -1,7 +1,18 @@
 {
   "private": true,
-  "workspaces": [
-    "svelte-todomvc",
-    "vue-todomvc"
-  ]
+  "dependencies": {
+    "zlib": "^1.0.5"
+  },
+  "scripts": {
+    "analyze": "npm run build:svelte && npm run build:vue && npm run build:react && npm run build:angular && node compress.js",
+    "build:svelte": "cd svelte-todomvc && npm run build",
+    "build:vue": "cd vue-todomvc && npm run build",
+    "build:react": "cd react-todomvc && npm run build",
+    "build:angular": "cd angular-todomvc && npm run build",
+    "postinstall": "npm run i:svelte && npm run i:vue && npm run i:react && npm run i:angular",
+    "i:svelte": "cd svelte-todomvc && npm i",
+    "i:vue": "cd vue-todomvc && npm i",
+    "i:react": "cd react-todomvc && npm i",
+    "i:angular": "cd angular-todomvc && npm i"
+  }
 }

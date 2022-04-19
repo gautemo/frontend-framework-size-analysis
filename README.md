@@ -73,26 +73,17 @@ Everything above is from the original repository [vue-svelte-size-analysis](http
 
 From this point on I wanted to add my own comparisons with React and Angular in the mix, to compare three of the most popular frameworks.
 
-|                 | Vue      | Svelte            | React             | Angular
-| --------------- | -------- | ----------------- | ----------------- | ----------------
-| Component chunk | 1.14kb   | 1.96kb (171.92%)  | 1.22kb (107.01%)  | 1.68kB (147.37%)
-| Vendor chunk    | 17.45kb  | 1.85kb (10.60%)   | 36.03kb (206.47%) | 41.74kB (239.19%)
+|                 | Vue     | Svelte | React   | Angular
+| --------------- | ------- | ------ | ------- | --------
+| Component chunk | 1.45kb  | 2.31kb | 1.56kb  | 1.68kB  
+| Vendor chunk    | 18.10kb | 1.54kb | 38.55kb | 41.74kB 
 
-### Framework size
+<img src="./chart.png" width="600px">
 
-<img src="./chart3.png" width="600px">
+Svelte is smallest from 0-19 components.  
+Vue is smallest from 20 components.  
+React is smaller than Svelte after 50 components.  
+Angular is smaller than Svelte after 64 components.  
 
-### Component size
-
-<img src="./chart2.png" width="600px">
-
-### Component + framework graph
-
-<img src="./chart4.png" width="600px">
-
-As mentioned above Svelte is smallest from 0 - 19 components and Vue is smallest beyond that.
-But React which has the largest vendor bundle and slightly larger component size than Vue, but much less than Svelte 
-needs to have 47 or more components at this size until it becomes smaller than Svelte.
-
-This was done on versions Vue 3.0.5, Svelte 3.37.0, and React 17.0.0. 
+This was done on versions Vue 3.2.33, Svelte 3.47.0, React 18.0.0, and Angular 13.3.0. 
 Note that in newer versions they can make improvements reducing the size or add features growing the size.

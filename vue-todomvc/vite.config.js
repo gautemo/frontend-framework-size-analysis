@@ -1,11 +1,18 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin  } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), splitVendorChunkPlugin()],
   define: {
-    // dropping options API can further reduce Vue baseline size
-    // __VUE_OPTIONS_API__: false
+    __VUE_OPTIONS_API__: false
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: '[name].js',
+        chunkFileNames: '[name].js',
+      }
+    }
   }
 })
