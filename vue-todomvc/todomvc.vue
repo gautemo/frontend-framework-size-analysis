@@ -11,7 +11,7 @@ const filters = {
 
 const todos = ref(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'))
 const visibility = ref('all')
-const editedTodo = ref()
+const editedTodo = ref(null)
 
 const filteredTodos = computed(() => filters[visibility.value](todos.value))
 const remaining = computed(() => filters.active(todos.value).length)
@@ -32,27 +32,18 @@ function addTodo(e) {
   }
 }
 
-function removeTodo(todo) {
-  todos.value.splice(todos.value.indexOf(todo), 1)
+function removeTodo(index) {
+  todos.value.splice(index, 1)
 }
 
-let beforeEditCache = ''
-
-function editTodo(todo) {
-  beforeEditCache = todo.title
-  editedTodo.value = todo
-}
-
-function cancelEdit(todo) {
-  editedTodo.value = null
-  todo.title = beforeEditCache
-}
-
-function doneEdit(todo) {
-  if (editedTodo.value) {
-    editedTodo.value = null
-    todo.title = todo.title.trim()
-    if (!todo.title) removeTodo(todo)
+function doneEdit(value, index) {
+  if(editedTodo.value !== null) {
+    if (value) {
+      editedTodo.value = null
+      todos.value[index].title = value
+    } else {
+      removeTodo(index)
+    }
   }
 }
 
@@ -87,16 +78,19 @@ onHashChange()
     <input id="toggle-all" class="toggle-all" type="checkbox" :checked="remaining === 0" @change="toggleAll" />
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
-      <li v-for="todo in filteredTodos" class="todo" :key="todo.id"
-        :class="{ completed: todo.completed, editing: todo === editedTodo }">
+      <li v-for="(todo, i) in filteredTodos" class="todo" :key="todo.id"
+        :class="{ completed: todo.completed, editing: i === editedTodo }">
         <div class="view">
           <input class="toggle" type="checkbox" v-model="todo.completed" />
-          <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
-          <button class="destroy" @click="removeTodo(todo)">x</button>
+          <label @dblclick="editedTodo = i">{{ todo.title }}</label>
+          <button class="destroy" @click="removeTodo(i)">x</button>
         </div>
-        <input v-if="todo === editedTodo" class="edit" type="text" v-model="todo.title"
-          @vue:mounted="({ el }) => el.focus()" @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)"
-          @keyup.escape="cancelEdit(todo)" />
+        <input v-if="i === editedTodo" class="edit" type="text"
+          @vue:mounted="({ el }) => el.focus()"
+          :value="todo.title"
+          @blur="e => doneEdit(e.target.value.trim(), i)"
+          @keyup.enter="e => doneEdit(e.target.value.trim(), i)"
+          @keyup.escape="editedTodo = null" />
       </li>
     </ul>
   </section>

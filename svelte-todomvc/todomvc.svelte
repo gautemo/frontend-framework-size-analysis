@@ -59,8 +59,15 @@
 	}
 
 	function submit(event) {
-		items[editing].description = event.target.value;
-		editing = null;
+		if(editing != null) {
+      const desc = event.target.value.trim()
+      if(desc) {
+        items[editing].description = desc;
+      } else {
+        remove(editing)
+      }
+      editing = null;
+    }
 	}
 	
 	$: filtered = currentFilter === 'all'

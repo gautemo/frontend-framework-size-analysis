@@ -35,9 +35,9 @@ const TodoMVC = () => {
     }
   }
 
-  const removeTodo = (todo) => {
+  const removeTodo = (index) => {
     const array = [...todos]
-    array.splice(array.indexOf(todo), 1)
+    array.splice(index, 1)
     setTodos(array)
   }
 
@@ -48,28 +48,15 @@ const TodoMVC = () => {
   const toggleAll = (event) => {
     setTodos(todos.map(todo => ({ ...todo, completed: event.target.checked })))
   }
-
-  const [beforeEditCache, setBeforeEditCache] = useState('')
-  const editTodo = (todo) => {
-    setBeforeEditCache(todo.title)
-    setEditedTodo(todo)
-  }
-
-  const editTodoTitle = (changeTodo, title) => {
-    setTodos(todos.map(todo => todo.id === changeTodo.id ? { ...todo, title } : todo))
-  }
-
-  const cancelEdit = (todo) => {
-    setEditedTodo(null)
-    setTodos(todos.map(t => t.id === todo.id ? { ...todo, title: beforeEditCache } : t))
-  }
   
-  const doneEdit = (todo) => {
-    if(editedTodo){
+  const doneEdit = (value, index) => {
+    if(editedTodo !== null){
       setEditedTodo(null)
-      const trimmedTitle = todo.title.trim()
-      setTodos(todos.map(t => t.id === todo.id ? { ...todo, title: trimmedTitle } : t))
-      if (!trimmedTitle) removeTodo(todo)
+      if(value) {
+        setTodos(todos.map((t, i) => i === index ? { ...t, title: value } : t))
+      } else {
+        removeTodo(index)
+      }
     }
   }
 
@@ -119,9 +106,9 @@ const TodoMVC = () => {
           <label htmlFor="toggle-all">Mark all as complete</label>
           <ul className="todo-list">
             {
-              filteredTodos.map(todo => (
+              filteredTodos.map((todo, index) => (
                 <li
-                  className={`todo ${todo.completed ? 'completed' : ''} ${todo === editedTodo ? 'editing' : ''}`}
+                  className={`todo ${todo.completed ? 'completed' : ''} ${index === editedTodo ? 'editing' : ''}`}
                   key={todo.id}
                 >
                   <div className="view">
@@ -131,25 +118,23 @@ const TodoMVC = () => {
                       checked={todo.completed} 
                       onChange={e => toggleCompleted(todo, e.target.checked)} 
                     />
-                    <label onDoubleClick={() => editTodo(todo)}>{todo.title}</label>
-                    <button className="destroy" onClick={() => removeTodo(todo)}>x</button>
+                    <label onDoubleClick={() => setEditedTodo(index)}>{todo.title}</label>
+                    <button className="destroy" onClick={() => removeTodo(index)}>x</button>
                   </div>
                   {
-                    todo.id === editedTodo?.id && 
+                    index === editedTodo && 
                     <input
                       className="edit"
                       type="text"
-                      v-model="todo.title"
                       autoFocus
-                      value={todo.title}
-                      onBlur={() => doneEdit(todo)}
-                      onInput={e => editTodoTitle(todo, e.target.value)}
+                      defaultValue={todo.title}
+                      onBlur={(e) => doneEdit(e.target.value.trim(), index)}
                       onKeyUp={e => {
                         if(e.key === 'Enter'){
-                          doneEdit(todo)
+                          doneEdit(e.target.value.trim(), index)
                         }
                         if(e.key === 'Escape'){
-                          cancelEdit(todo)
+                          setEditedTodo(null)
                         }
                       }}
                     />

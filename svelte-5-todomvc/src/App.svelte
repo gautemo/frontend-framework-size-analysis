@@ -54,7 +54,12 @@
 
 	function submit(event) {
     if(editing != null) {
-      items[editing].description = event.target.value;
+      const desc = event.target.value.trim()
+      if(desc) {
+        items[editing].description = desc;
+      } else {
+        remove(editing)
+      }
       editing = null;
     }
 	}

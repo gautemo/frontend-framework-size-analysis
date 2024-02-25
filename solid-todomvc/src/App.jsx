@@ -16,8 +16,6 @@ const filters = {
   completed: (todos) => todos.filter((todo) => todo.completed)
 }
 
-let beforeEditCache = ''
-
 function App() {
   const [todos, setTodos] = createSignal(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'))
   const [visibility, setVisibility] = createSignal('all')
@@ -44,9 +42,9 @@ function App() {
     }
   }
 
-  const removeTodo = (todo) => {
+  const removeTodo = (index) => {
     const array = [...todos()]
-    array.splice(array.indexOf(todo), 1)
+    array.splice(index, 1)
     setTodos(array)
   }
 
@@ -57,27 +55,15 @@ function App() {
   const toggleAll = (checked) => {
     setTodos(todos().map(todo => ({ ...todo, completed: checked })))
   }
-
-  const editTodo = (todo) => {
-    beforeEditCache = todo.title
-    setEditedTodo(todo)
-  }
-
-  const editTodoTitle = (changeTodo, title) => {
-    setTodos(todos().map(todo => todo.id === changeTodo.id ? { ...todo, title } : todo))
-  }
-
-  const cancelEdit = (todo) => {
-    setEditedTodo(null)
-    setTodos(todos().map(t => t.id === todo.id ? { ...todo, title: beforeEditCache } : t))
-  }
   
-  const doneEdit = (todo) => {
-    if(editedTodo){
+  const doneEdit = (value, index) => {
+    if(editedTodo()){
       setEditedTodo(null)
-      const trimmedTitle = todo.title.trim()
-      setTodos(list => list.map(t => t.id === todo.id ? { ...todo, title: trimmedTitle } : t))
-      if (!trimmedTitle) removeTodo(todo)
+      if(value) {
+        setTodos(list => list.map((t, i) => i === index ? { ...t, title: value } : t))
+      } else {
+        removeTodo(index)
+      }
     }
   }
 
@@ -121,27 +107,26 @@ return (
         <label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
           <For each={filteredTodos()}>
-            {(todo) => (
+            {(todo, index) => (
               <li
                 class="todo"
-                classList={{ editing: editedTodo()?.id === todo.id, completed: todo.completed }}
+                classList={{ editing: editedTodo() === index(), completed: todo.completed }}
               >
                 <div class="view">
                   <input class="toggle" type="checkbox" checked={todo.completed} onInput={() => toggleCompleted(todo)}/>
-                  <label onDblClick={() => editTodo(todo)}>{todo.title}</label>
+                  <label onDblClick={() => setEditedTodo(index())}>{todo.title}</label>
                   <button class="destroy" onClick={[removeTodo, todo.id]}>x</button>
                 </div>
-                <Show when={editedTodo()?.id === todo.id}>
+                <Show when={editedTodo() === index()}>
                   <input
                     class="edit"
                     value={todo.title}
-                    onInput={e => todo.title = e.target.value}
-                    onFocusOut={() => doneEdit(todo)}
+                    onFocusOut={(e) => doneEdit(e.target.value.trim(), index())}
                     onKeyUp={(e) => {
                       if (e.keyCode === ENTER_KEY) {
-                        doneEdit(todo)
+                        doneEdit(e.target.value.trim(), index())
                       } else if (e.keyCode === ESCAPE_KEY) {
-                        cancelEdit(todo)
+                        setEditedTodo(null)
                       }
                     }}
                     use:setFocus

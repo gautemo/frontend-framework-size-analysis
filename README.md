@@ -8,9 +8,9 @@ Everything above is from the original repository [vue-svelte-size-analysis](http
 From this point on I wanted to add my own comparisons with React and Angular in the mix, to compare three of the most popular frameworks.
 
 |                 | Vue     | Svelte v4 | Svelte v5 | React   | Angular  | Solid  | Preact  |
-| --------------- | ------- | --------- | --------- | ------- | -------- | ------ | ------ |
-| Component chunk | 1.44kB  | 2.32kB    | 1.54kB    | 1.35kB  | 1.67kB   | 1.59kB | 1.31kB |
-| Vendor chunk    | 18.68kB | 1.80kB    | 6.34kB    | 38.85kB | 43.97kB  | 3.37kB | 6.37kB |
+| --------------- | ------- | --------- | --------- | ------- | -------- | ------ | ------- |
+| Component chunk | 1.42kB  | 2.35kB    | 1.56kB    | 1.31kB  | 1.67kB   | 1.59kB | 1.27kB  |
+| Vendor chunk    | 18.45kB | 1.80kB    | 6.34kB    | 38.79kB | 43.97kB  | 3.37kB | 6.37kB  |
 
 <img src="./chart.png" width="600px">
 

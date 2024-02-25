@@ -8,8 +8,6 @@ const filters = {
   completed: (todos) => todos.filter((todo) => todo.completed)
 }
 
-let beforeEditCache = ''
-
 const visibility = signal('all')
 
 function onHashChange() {
@@ -47,9 +45,9 @@ export function App() {
     }
   }
 
-  const removeTodo = (todo) => {
+  const removeTodo = (index) => {
     const array = [...todos.value]
-    array.splice(array.indexOf(todo), 1)
+    array.splice(index, 1)
     todos.value = array
   }
 
@@ -57,24 +55,21 @@ export function App() {
     todos.value = todos.value.map(v => ({...v, completed: e.target.checked}))
   }
 
-  const editTodo = (todo) => {
-    beforeEditCache = todo.title
-    editedTodo.value = todo
+  const editTodo = (index) => {
+    editedTodo.value = index
     setTimeout(() => {
       document.querySelector('.todo-edit').focus()
     }, 10);
   }
-
-  const cancelEdit = (todo) => {
-    editedTodo.value = null
-    todo.title = beforeEditCache
-  }
   
-  const doneEdit = (todo) => {
-    if (editedTodo.value) {
+  const doneEdit = (value, index) => {
+    if (editedTodo.value !== null) {
       editedTodo.value = null
-      todo.title = todo.title.trim()
-      if (!todo.title) removeTodo(todo)
+      if(value) {
+        todos.value = todos.value.map((t,i) => i === index ? {...t, title: value} : t)
+      } else {
+        removeTodo(index)
+      }
     }
   }
 
@@ -108,9 +103,9 @@ export function App() {
         <label htmlFor="toggle-all">Mark all as complete</label>
         <ul className="todo-list">
           {
-            filteredTodos.value.map(todo => (
+            filteredTodos.value.map((todo, index) => (
               <li
-                className={`todo ${todo.completed ? 'completed' : ''} ${todo === editedTodo.value ? 'editing' : ''}`}
+                className={`todo ${todo.completed ? 'completed' : ''} ${index === editedTodo.value ? 'editing' : ''}`}
                 key={todo.id}
               >
                 <div className="view">
@@ -120,25 +115,24 @@ export function App() {
                     checked={todo.completed} 
                     onChange={e => todos.value = todos.value.map(v => v.id === todo.id ? {...v, completed: e.target.checked} : v)} 
                   />
-                  <label onDblClick={() => editTodo(todo)}>{todo.title}</label>
-                  <button className="destroy" onClick={() => removeTodo(todo)}>x</button>
+                  <label onDblClick={() => editTodo(index)}>{todo.title}</label>
+                  <button className="destroy" onClick={() => removeTodo(index)}>x</button>
                 </div>
                 {
-                  todo.id === editedTodo.value?.id && 
+                  index === editedTodo.value && 
                   <input
                     className="edit"
                     type="text"
                     v-model="todo.title"
                     class="todo-edit"
                     value={todo.title}
-                    onBlur={() => doneEdit(todo)}
-                    onInput={e => todos.value = todos.value.map(v => v.id === todo.id ? {...v, title: e.target.value} : v)}
+                    onBlur={(e) => doneEdit(e.target.value.trim(), index)}
                     onKeyUp={e => {
                       if(e.key === 'Enter'){
-                        doneEdit(todo)
+                        doneEdit(e.target.value.trim(), index)
                       }
                       if(e.key === 'Escape'){
-                        cancelEdit(todo)
+                        editedTodo.value = null
                       }
                     }}
                   />
