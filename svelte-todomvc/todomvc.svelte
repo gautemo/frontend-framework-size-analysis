@@ -2,12 +2,14 @@
 	const ENTER_KEY = 13;
 	const ESCAPE_KEY = 27;
 
+	const STORAGE_KEY = 'todos-svelte'
+
 	let currentFilter = 'all';
 	let items = [];
 	let editing = null;
 
 	try {
-		items = JSON.parse(localStorage.getItem('todos-svelte')) || [];
+		items = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 	} catch (err) {
 		items = [];
 	}
@@ -71,7 +73,7 @@
 	$: numCompleted = items.filter(item => item.completed).length;
 
 	$: try {
-		localStorage.setItem('todos-svelte', JSON.stringify(items));
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 	} catch (err) {
 		// noop
 	}
@@ -98,7 +100,7 @@
 					<div class="view">
 						<input class="toggle" type="checkbox" bind:checked={item.completed}>
 						<label on:dblclick="{() => editing = index}">{item.description}</label>
-						<button on:click="{() => remove(index)}" class="destroy"></button>
+						<button on:click="{() => remove(index)}" class="destroy">x</button>
 					</div>
 
 					{#if editing === index}

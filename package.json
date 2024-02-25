@@ -4,15 +4,21 @@
     "zlib": "^1.0.5"
   },
   "scripts": {
-    "analyze": "npm run build:svelte && npm run build:vue && npm run build:react && npm run build:angular && node compress.js",
+    "analyze": "npm run build:svelte && npm run build:vue && npm run build:react && npm run build:solid && npm run build:preact && npm run build:svelte5 && node compress.js",
     "build:svelte": "cd svelte-todomvc && npm run build",
+    "build:svelte5": "cd svelte-5-todomvc && npm run build",
     "build:vue": "cd vue-todomvc && npm run build",
     "build:react": "cd react-todomvc && npm run build",
     "build:angular": "cd angular-todomvc && npm run build",
-    "postinstall": "npm run i:svelte && npm run i:vue && npm run i:react && npm run i:angular",
+    "build:solid": "cd solid-todomvc && npm run build",
+    "build:preact": "cd preact-todomvc && npm run build",
+    "postinstall": "npm run i:svelte && npm run i:vue && npm run i:react && npm run i:angular && npm run i:solid && npm run i:preact && npm run i:svelte5",
     "i:svelte": "cd svelte-todomvc && npm i",
+    "i:svelte5": "cd svelte-5-todomvc && npm i",
     "i:vue": "cd vue-todomvc && npm i",
     "i:react": "cd react-todomvc && npm i",
-    "i:angular": "cd angular-todomvc && npm i"
+    "i:angular": "cd angular-todomvc && npm i",
+    "i:solid": "cd solid-todomvc && npm i",
+    "i:preact": "cd preact-todomvc && npm i"
   }
 }

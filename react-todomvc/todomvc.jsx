@@ -131,7 +131,7 @@ const TodoMVC = () => {
                       checked={todo.completed} 
                       onChange={e => toggleCompleted(todo, e.target.checked)} 
                     />
-                    <label onClick={() => editTodo(todo)}>{todo.title}</label>
+                    <label onDoubleClick={() => editTodo(todo)}>{todo.title}</label>
                     <button className="destroy" onClick={() => removeTodo(todo)}>x</button>
                   </div>
                   {

@@ -1,82 +1,16 @@
-# Comparing generated code size of Vue and Svelte components
+# Fork of vue-svelte-size-analysis
 
-## TL;DR
-
-1. Compiled Svelte component code is **70%** heavier than Vue 3 equivalent, and **110%** heavier in SSR mode.
-2. It takes ~**19** TodoMVC-sized components (**13** in SSR scenarios) to offset the framework base runtime size difference between Vue and Svelte.
-
-## Methodology
-
-1. Both frameworks are used to implement a single spec-compliant, functionally-equivalent TodoMVC component.
-
-   - Vue: [todomvc.vue](./todomvc.vue) (using `<script setup>` syntax)
-   - Svelte: [todomvc.svelte](./todomvc.svelte) (based on [the official implementation](https://github.com/sveltejs/svelte-todomvc/blob/master/src/TodoMVC.svelte), removed the `uuid` function for fairness)
-
-2. Components are compiled in isolation using each framework's online SFC compilers
-
-   - Vue: [sfc.vuejs.org](https://sfc.vuejs.org/) @3.1.4 -> `todomvc.vue.js`
-   - Svelte: [svelte.dev/repl](https://svelte.dev/repl) @3.38.3 -> `todomvc.svelte.js`
-
-3. Compiled files are minified using [Terser REPL](https://try.terser.org/), and then have the ES imports and exports removed. This is because in a bundled app these imports/exports are either not needed or shared between multiple components.
-
-   - Vue: `todomvc.vue.min.js`
-   - Svelte: `todomvc.svelte.min.js`
-
-4. Minified files are then compressed w/ gzip and brotli.
-
-   - Vue: `todomvc.vue.min.js.gz` / `todomvc.vue.min.js.brotli`
-   - Svelte: `todomvc.svelte.min.js.gz` / `todomvc.svelte.min.js.brotli`
-
-5. In addition, in an SSR setting, Svelte needs to compile its components in "hydratable" mode, which results in additional generated code. Steps 2-4 are repeated for Svelte with "hydratable: true" compiler options.
-
-   Vue produces exactly the same code in SSR settings, but imports some additional hydration-specific runtime code (~0.89kb min+brotli).
-
-6. For each framework, a default Vite app using the component is created and the production build is run (svelte w/ `hydratable: false`). Each app is also built another time using SSR-enabled settings.
-
-   The default Vite build splits a vendor chunk (= framework runtime code) and an index chunk (= component code).
-
-## Results
-
-|                                   | Vue     | Vue (SSR) | Svelte           | Svelte (SSR)     |
-| --------------------------------- | ------- | --------- | ---------------- | ---------------- |
-| Source                            | 3.93kb  | -         | 3.31kb           | -                |
-| Compiled w/o imports (min)        | 2.73kb  | -         | 5.01kb (183.52%) | 6.59kb (241.39%) |
-| Compiled w/o imports (min+gz)     | 1.25kb  | -         | 2.13kb (170.40%) | 2.68kb (214.40%) |
-| Compiled w/o imports (min+brotli) | 1.10kb  | -         | 1.88kb (170.91%) | 2.33kb (211.82%) |
-| Vite component chunk (min+brotli) | 1.13kb  | -         | 1.95kb (172.26%) | 2.41kb (213.27%) |
-| Vite vendor chunk (min+brotli)    | 16.89kb | 17.78kb   | 1.85kb           | 2.13kb           |
-
-<img src="./chart.png" width="600px">
-
-## Analysis
-
-In client-only mode, the Svelte app imported 1.85kb min+brotli framework code, which is **15.04kb** lighter than Vue. This is the base size difference.
-
-However, for the component code, Svelte's min + compressed output size is **~1.7x** of the Vue equivalent. In this case, a single component results in **0.78kb** of size difference. In SSR scenarios, this ratio goes up further to **~2.1x** where a single component results in a **1.23kb** size difference.
-
-TodoMVC covers a pretty decent feature range and is generally representative of the components most users build in typical apps. We can reasonably assume that similar size difference would be found in real world scenarios. That is to say, in theory, if an app contains more than 15.04 / 0.78 ~= **19** TodoMVC-sized components, the Svelte app would end up being heavier than the Vue app.
-
-This threshold is even lower in SSR scenarios. In SSR mode, the base difference is **15.65kb** but the compnent count threshold is down to 15.65 / 1.23 ~= **13**!
-
-Obviously in real world apps there are many other factors at play: more features would be imported from the frameworks and 3rd party libraries will be used. The size curve would be affected by the percentage of pure component code in a project. However, it would be safe to assume that the more an app is over the 19-components threshold (or 13 in SSR mode, which most non-trivial apps would probably cross), the less likely it is for Svelte to have any real size advantage.
-
-## Takeaways
-
-This study isn't meant to show which framework is better - it's strictly focused on analyzing bundle size implications of different framework implementation strategies.
-
-As can be seen from the data, the two frameworks have different sweet spots in terms of bundle size - and it depends a lot on what kind of use case you have. Svelte is still great for one-off components (e.g. wrapped as a custom element), but its size is in fact a disadvantage in medium to large scale applications, especially with SSR.
-
-In a broader sense, this study is meant to showcaes how frameworks are picking different balance points on the compile-time vs. runtime spectrum: Vue performs a decent amount of compile-time optimizations on the source format, but opts for a heavier base runtime in return for smaller generated code. Svelte opts for a minimal runtime but with the cost of heavier generated code. Can Svelte further improve its codegen to reduce code output? Can Vue further improve the tree-shaking to make the baseline smaller? Can another framework find an even better balance point? The answer is probably yes to all of these questions - but as long as we can now acknowledge that "framework size" is a much more nuanced topic than comparing the size of Hello World apps, this study has served its purpose.
+[Original repo](https://github.com/yyx990803/vue-svelte-size-analysis)
 
 ## Gaute's analysis & takeaways
 Everything above is from the original repository [vue-svelte-size-analysis](https://github.com/yyx990803/vue-svelte-size-analysis).
 
 From this point on I wanted to add my own comparisons with React and Angular in the mix, to compare three of the most popular frameworks.
 
-|                 | Vue     | Svelte | React   | Angular
-| --------------- | ------- | ------ | ------- | --------
-| Component chunk | 1.45kb  | 2.31kb | 1.56kb  | 1.68kB  
-| Vendor chunk    | 18.10kb | 1.54kb | 38.55kb | 41.74kB 
+|                 | Vue     | Svelte v4 | Svelte v5 | React   | Angular  | Solid  | Preact  |
+| --------------- | ------- | --------- | --------- | ------- | -------- | ------ | ------ |
+| Component chunk | 1.44kB  | 2.32kB    | 1.54kB    | 1.35kB  | 1.67kB   | 1.59kB | 1.31kB |
+| Vendor chunk    | 18.68kB | 1.80kB    | 6.34kB    | 38.85kB | 43.97kB  | 3.37kB | 6.37kB |
 
 <img src="./chart.png" width="600px">
 
@@ -85,5 +19,5 @@ Vue is smallest from 20 components.
 React is smaller than Svelte after 50 components.  
 Angular is smaller than Svelte after 64 components.  
 
-This was done on versions Vue 3.2.33, Svelte 3.47.0, React 18.0.0, and Angular 13.3.0. 
+This was done on versions Vue 3.4.19, Svelte 4.2.12, React 18.2.0, Angular 17.2.2, Solid 1.8.15, and Preact 10.19.6. 
 Note that in newer versions they can make improvements reducing the size or add features growing the size.
