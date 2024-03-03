@@ -3,9 +3,8 @@
 [Original repo](https://github.com/yyx990803/vue-svelte-size-analysis)
 
 ## Gaute's analysis & takeaways
-Everything above is from the original repository [vue-svelte-size-analysis](https://github.com/yyx990803/vue-svelte-size-analysis).
 
-From this point on I wanted to add my own comparisons with React and Angular in the mix, to compare three of the most popular frameworks.
+I wanted to add my own comparisons with React, Angular, Solid, and Preact in the mix.
 
 |                 | Vue     | Svelte v4 | Svelte v5 | React   | Angular  | Solid  | Preact  |
 | --------------- | ------- | --------- | --------- | ------- | -------- | ------ | ------- |
