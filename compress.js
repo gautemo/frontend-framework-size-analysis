@@ -19,8 +19,8 @@ function compress(fw) {
 }
 
 function compressAngular() {
-  const component = fs.readFileSync(`./angular-todomvc/dist/angular-todomvc/browser/chunk-NGBUTW5B.js`)
-  const vendor1 = fs.readFileSync(`./angular-todomvc/dist/angular-todomvc/browser/chunk-IA7WTFUI.js`)
+  const component = fs.readFileSync(`./angular-todomvc/dist/angular-todomvc/browser/chunk-5ET55HIY.js`)
+  const vendor1 = fs.readFileSync(`./angular-todomvc/dist/angular-todomvc/browser/chunk-AVFIUCUY.js`)
   const vendor2 = fs.readFileSync(`./angular-todomvc/dist/angular-todomvc/browser/main.js`)
   const vendor3 = fs.readFileSync(`./angular-todomvc/dist/angular-todomvc/browser/polyfills.js`)
   const fileComponent = `./brotli/angular.component.brotli`
@@ -50,3 +50,4 @@ compress('react')
 compressAngular()
 compress('solid')
 compress('preact')
+compress('lit')

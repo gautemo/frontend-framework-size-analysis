@@ -1,4 +1,4 @@
-import { Component, effect, signal, computed } from '@angular/core';
+import { Component } from '@angular/core';
 import { TodoComponent } from './todo/todo.component';
 
 
@@ -9,10 +9,4 @@ import { TodoComponent } from './todo/todo.component';
   imports: [TodoComponent]
 })
 export class AppComponent {
-  a = signal(0)
-  b = computed(() => 2)
-
-  constructor(){
-    effect(() => console.log('hi'))
-  }
 }
